@@ -24,5 +24,9 @@ public class BoardState {
 	public boolean isOccupied(int x, int y) {
 		return this.board[x][y];
 	}
+	
+	public int getBoardSize() {
+		return this.board.length;
+	}
 
 }

@@ -31,7 +31,9 @@ public class NQueen {
 	}
 	
 	public void run() {
-		// TODO create the first run thingies, then drive them recursively to own threads.
+		BoardState bstate = new BoardState(this.bSize);
+		ExecutorService service = Executors.newCachedThreadPool();
+		service.submit(new BoardCalculation(BoardState, 0));
 	}
 	
 }
