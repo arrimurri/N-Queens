@@ -25,7 +25,7 @@ public class NQueen {
 		this.bSize = boardSize;
 	}
 	
-	public NQueen(int threadCount) {
+	public NQueen(int boardSize, int threadCount) {
 		this.service = Executors.newFixedThreadPool(threadCount);
 		this.bSize = boardSize;
 	}
