@@ -7,8 +7,8 @@ public class BoardCalculation implements Callable<boolean[]> {
 	final BoardState bState;
 	final int rNumber;
 	
-	public BoardCalculation(BoardState boardStatus, int rowNumber) {
-		this.bState = boardStatus;
+	public BoardCalculation(BoardState boardState, int rowNumber) {
+		this.bState = boardState;
 		this.rNumber = rowNumber;
 	}
 
@@ -28,23 +28,27 @@ public class BoardCalculation implements Callable<boolean[]> {
 	}
 	
 	private boolean checkUpRight(int colIndex) {
+		int j = colIndex;
 		for(int i = this.rNumber; i > -1; i--) {
-			for(int j = colIndex; colIndex < this.bState.getBoardSize(); j++) {
+			if(j < this.bState.getBoardSize()) {
 				if(this.bState.isOccupied(i, j))
 					return false;
 			}
+			j++;
 		}
-		return false;
+		return true;
 	}
 
 	private boolean checkUpLeft(int colIndex) {
+		int j = colIndex;
 		for(int i = this.rNumber; i > -1; i--) {
-			for(int j = colIndex; colIndex > -1; j--) {
+			if(j < this.bState.getBoardSize()) {
 				if(this.bState.isOccupied(i, j))
 					return false;
 			}
+			j++;
 		}
-		return false;
+		return true;
 	}
 
 	private boolean checkUp(int colIndex) {
