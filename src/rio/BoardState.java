@@ -5,8 +5,9 @@ public class BoardState {
 	private boolean[][] board;
 	
 	public BoardState(boolean[][] b) {
+		this.board = new boolean[b.length][b.length];
 		for(int i = 0; i < b.length; i++) {
-			for(int j = 0; j < b[i].length; i++) {
+			for(int j = 0; j < b[i].length; j++) {
 				this.board[i][j] = b[i][j];
 			}
 		}

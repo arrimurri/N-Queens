@@ -19,34 +19,36 @@ public class BoardCalculation implements Callable<boolean[]> {
 		for(int i = 0; i < n; i++) {
 			if(this.checkUp(i) &&
 			   this.checkUpLeft(i) &&
-			   this.checkUpRight(i))
+			   this.checkUpRight(i)) {
 				ret[i] = true;
-			else
+				System.out.println("True for this " + i + " in row " + this.rNumber);
+				System.out.println(this.bState);
+			}
+			else {
 				ret[i] = false;
+				System.out.println("False for this " + i + " in row " + this.rNumber);
+				System.out.println(this.bState);
+			}
 		}
 		return ret;
 	}
 	
 	private boolean checkUpRight(int colIndex) {
-		int j = colIndex;
-		for(int i = this.rNumber; i > -1; i--) {
+		for(int i = this.rNumber, j = colIndex; i > -1; i--, j++) {
 			if(j < this.bState.getBoardSize()) {
 				if(this.bState.isOccupied(i, j))
 					return false;
 			}
-			j++;
 		}
 		return true;
 	}
 
 	private boolean checkUpLeft(int colIndex) {
-		int j = colIndex;
-		for(int i = this.rNumber; i > -1; i--) {
-			if(j < this.bState.getBoardSize()) {
+		for(int i = this.rNumber, j = colIndex; i > -1; i--, j--) {
+			if(j > -1) {
 				if(this.bState.isOccupied(i, j))
 					return false;
 			}
-			j++;
 		}
 		return true;
 	}
