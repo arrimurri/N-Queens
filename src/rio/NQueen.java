@@ -1,5 +1,7 @@
 package rio;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -15,6 +17,7 @@ import java.util.concurrent.Executors;
 public class NQueen {
 	ExecutorService service;
 	int bSize;
+	List<BoardState> retList = new ArrayList<BoardState>();
 	
 	public NQueen(int boardSize, ExecutorService s) {
 		this.service = s;
@@ -33,22 +36,62 @@ public class NQueen {
 	
 	public void run() {
 		for(int i = 0; i < this.bSize; i++) {
-			boolean[][] temp = new boolean[this.bSize][this.bSize];
-			temp[0][i] = true;
-			BoardState bs = new BoardState(temp);
-			BoardState res = recCalc(bs, 1);
-			System.out.println("Result:");
-			System.out.println(res);
+			boolean[] temp = new boolean[this.bSize];
+			temp[i] = true;
+			BoardState bs = new BoardState(this.bSize);
+			bs.changeRow(temp, 0);
+			// BoardState res = recCalc(bs, 1);
+			BoardCalculation bc = new BoardCalculation(bs, 1, this.service, this.retList);
+			BoardState retstate = null;
+			try {
+				retstate = this.service.submit(bc).get();
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (ExecutionException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			//System.out.println("Result:");
+			//System.out.println(retstate);
+		}
+		/*
+		try {
+			Thread.sleep(5000);
+		} catch (InterruptedException e) {
+			System.out.println(e);
+			e.printStackTrace();
+		}
+		*/
+		try {
+			Thread.sleep(10000);
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		this.service.shutdown();
+		while(!this.service.isTerminated()) {}
+		int count = 0;
+		if(this.retList.isEmpty()) {
+			System.out.println("There are no solutions");
+		}
+		for(BoardState b : this.retList) {
+			if(b != null) {
+				count++;
+				System.out.println("Solution #" + count + ":");
+				System.out.println(b);
+			}
 		}
 	}
 	
+	/*
 	private BoardState recCalc(BoardState bs, int nextRow) {
 		BoardState retState = null;
 		if(nextRow == bs.getBoardSize()) {
 			System.out.println("No more rows to read");
 			return bs;
 		}
-		BoardCalculation bc = new BoardCalculation(bs, nextRow);
+		BoardCalculation bc = new BoardCalculation(bs, nextRow, this.service);
 		boolean[] returnRow = null;
 		try {
 			returnRow = service.submit(bc).get();
@@ -77,5 +120,6 @@ public class NQueen {
 		}
 		return retState;
 	}
+	*/
 	
 }

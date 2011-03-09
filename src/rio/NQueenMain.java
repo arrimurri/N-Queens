@@ -4,7 +4,7 @@ public class NQueenMain {
 	public static void main(String[] args) {
 		System.out.println("N-Queens parallelization");
 		
-		int queenAmount = 4;
+		int queenAmount = 8;
 		int threads = 0;
 		
 		if(args.length == 1)
@@ -15,7 +15,7 @@ public class NQueenMain {
 		}
 		else
 			if(args.length != 0)
-				throw new IllegalArgumentException("Give no or one argument");
+				throw new IllegalArgumentException("Give zero, one or two arguments");
 		
 		NQueen q;
 		if(threads != 0)
