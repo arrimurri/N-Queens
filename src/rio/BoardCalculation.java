@@ -2,27 +2,25 @@ package rio;
 
 import java.util.List;
 import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Future;
 
 public class BoardCalculation implements Callable<BoardState> {
 	
 	final BoardState bState;
 	final int rNumber;
-	final ExecutorService eService;
 	List<BoardState> retList;
+	int boardSize;
 	
-	public BoardCalculation(BoardState boardState, int rowNumber, ExecutorService service, List<BoardState> l) {
+	public BoardCalculation(BoardState boardState, int rowNumber, List<BoardState> l) {
 		this.bState = boardState;
 		this.rNumber = rowNumber;
-		this.eService = service;
 		this.retList = l;
+		this.boardSize = this.bState.getBoardSize();
 	}
 
 	@Override
 	public BoardState call() throws Exception {
 		// If all rows have been counted return with that state
-		if(this.rNumber >= this.bState.getBoardSize()) {
+		if(this.rNumber >= this.boardSize) {
 			//System.out.println("There is a solution");
 			synchronized (retList) {
 				this.retList.add(this.bState);
@@ -30,29 +28,31 @@ public class BoardCalculation implements Callable<BoardState> {
 			return this.bState;		
 		}
 		
-		int n = this.bState.getBoardSize();
-		Future<BoardState> ret = null;
+		int n = this.boardSize;
+		BoardState ret = null;
 		
 		for(int i = 0; i < n; i++) {
-			if(this.checkUp(i) &&
-			   this.checkUpLeft(i) &&
-			   this.checkUpRight(i)) {
+			if(this.checkUp(this.bState, i, this.rNumber) &&
+			   this.checkUpLeft(this.bState, i, this.rNumber) &&
+			   this.checkUpRight(this.bState, i, this.rNumber)) {
 				//System.out.println("True for this " + i + " in row " + this.rNumber);
 				//System.out.println(this.bState);
 				BoardState newState = new BoardState(this.bState.getBoard());
-				boolean[] temp = new boolean[this.bState.getBoardSize()];
+				boolean[] temp = new boolean[this.boardSize];
 				for(int j = 0; j < temp.length; j++) 
 					temp[j] = false;
 				temp[i] = true;
 				newState.changeRow(temp, this.rNumber);
+				
+				ret = recCheck(newState, this.rNumber + 1);
 				//System.out.println("New state");
 				//System.out.println(newState);
 				
 				// "Recursively" call a new BoardCalculation
-				BoardCalculation newbc = new BoardCalculation(newState, this.rNumber + 1, this.eService, this.retList);
+				// BoardCalculation newbc = new BoardCalculation(newState, this.rNumber + 1, this.eService, this.retList);
 				
 				// Return a final state
-				ret = this.eService.submit(newbc);
+				// ret = this.eService.submit(newbc);
 			}
 			else {
 				ret = null;
@@ -62,32 +62,61 @@ public class BoardCalculation implements Callable<BoardState> {
 		}
 		if(ret == null)
 			return null;
-		return ret.get();
+		return ret;
 	}
 	
-	private boolean checkUpRight(int colIndex) {
-		for(int i = this.rNumber, j = colIndex; i > -1; i--, j++) {
-			if(j < this.bState.getBoardSize()) {
-				if(this.bState.isOccupied(i, j))
+	private BoardState recCheck(BoardState bs, int rowNumber) {
+		if(rowNumber >= this.boardSize) {
+			//System.out.println("There is a solution");
+			//System.out.println(bs);
+			synchronized (this.retList) {
+				this.retList.add(bs);
+			}
+			return bs;		
+		}
+		BoardState retState = null;
+		for(int i = 0; i < bs.getBoardSize(); i++) {
+			if(this.checkUp(bs, i, rowNumber) &&
+			   this.checkUpLeft(bs, i, rowNumber) && 
+			   this.checkUpRight(bs, i, rowNumber)) {
+				BoardState newState = new BoardState(bs.getBoard());
+				boolean[] temp = new boolean[this.boardSize];
+				for(int j = 0; j < temp.length; j++) 
+					temp[j] = false;
+				temp[i] = true;
+				newState.changeRow(temp, rowNumber);
+				retState = recCheck(newState, rowNumber + 1);
+			}
+			else {
+				retState = null;
+			}
+		}
+		return retState;
+	}
+	
+	private boolean checkUpRight(BoardState bs, int colIndex, int rowindex) {
+		for(int i = rowindex, j = colIndex; i > -1; i--, j++) {
+			if(j < this.boardSize) {
+				if(bs.isOccupied(i, j))
 					return false;
 			}
 		}
 		return true;
 	}
 
-	private boolean checkUpLeft(int colIndex) {
-		for(int i = this.rNumber, j = colIndex; i > -1; i--, j--) {
+	private boolean checkUpLeft(BoardState bs, int colIndex, int rowindex) {
+		for(int i = rowindex, j = colIndex; i > -1; i--, j--) {
 			if(j > -1) {
-				if(this.bState.isOccupied(i, j))
+				if(bs.isOccupied(i, j))
 					return false;
 			}
 		}
 		return true;
 	}
 
-	private boolean checkUp(int colIndex) {
-		for(int i = 0; i < this.rNumber; i++) {
-			if(this.bState.isOccupied(i, colIndex))
+	private boolean checkUp(BoardState bs, int colIndex, int rowindex) {
+		for(int i = 0; i < rowindex; i++) {
+			if(bs.isOccupied(i, colIndex))
 				return false;
 		}
 		return true;

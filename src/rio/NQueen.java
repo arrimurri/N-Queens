@@ -41,10 +41,10 @@ public class NQueen {
 			BoardState bs = new BoardState(this.bSize);
 			bs.changeRow(temp, 0);
 			// BoardState res = recCalc(bs, 1);
-			BoardCalculation bc = new BoardCalculation(bs, 1, this.service, this.retList);
-			BoardState retstate = null;
+			BoardCalculation bc = new BoardCalculation(bs, 1, this.retList);
+
 			try {
-				retstate = this.service.submit(bc).get();
+				this.service.submit(bc).get();
 			} catch (InterruptedException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -63,12 +63,7 @@ public class NQueen {
 			e.printStackTrace();
 		}
 		*/
-		try {
-			Thread.sleep(10000);
-		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+
 		this.service.shutdown();
 		while(!this.service.isTerminated()) {}
 		int count = 0;
@@ -78,10 +73,11 @@ public class NQueen {
 		for(BoardState b : this.retList) {
 			if(b != null) {
 				count++;
-				System.out.println("Solution #" + count + ":");
-				System.out.println(b);
+				//System.out.println("Solution #" + count + ":");
+				//System.out.println(b);
 			}
 		}
+		System.out.println("Number of solutions: " + count);
 	}
 	
 	/*
