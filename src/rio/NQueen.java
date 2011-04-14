@@ -46,10 +46,8 @@ public class NQueen {
 			try {
 				this.service.submit(bc).get();
 			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			} catch (ExecutionException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 			//System.out.println("Result:");
@@ -78,44 +76,5 @@ public class NQueen {
 			}
 		}
 		System.out.println("Number of solutions: " + count);
-	}
-	
-	/*
-	private BoardState recCalc(BoardState bs, int nextRow) {
-		BoardState retState = null;
-		if(nextRow == bs.getBoardSize()) {
-			System.out.println("No more rows to read");
-			return bs;
-		}
-		BoardCalculation bc = new BoardCalculation(bs, nextRow, this.service);
-		boolean[] returnRow = null;
-		try {
-			returnRow = service.submit(bc).get();
-		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (ExecutionException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		
-		if(returnRow != null) {
-			for(int i = 0; i < returnRow.length; i++) {
-				boolean[] temp = new boolean[returnRow.length];
-				if(returnRow[i]) {
-					BoardState newstate = new BoardState(bs.getBoard());
-					System.out.println(returnRow);
-					if((nextRow + 1) < newstate.getBoardSize()) {
-						newstate.changeRow(returnRow, nextRow);
-						System.out.println("New State");
-						System.out.println(newstate);
-						retState = recCalc(newstate, nextRow + 1);
-					}					
-				}
-			}
-		}
-		return retState;
-	}
-	*/
-	
+	}	
 }
