@@ -96,20 +96,26 @@ public class BoardCalculation implements Callable<BoardState> {
 				temp[i] = true;
 				this.bState.changeRow(temp, rowNumber);
 				retState = recCheck(this.bState, rowNumber + 1);
-				*/
+				
 				boolean[] temp = new boolean[this.boardSize];
 				for(int j = 0; j < temp.length; j++) 
 					temp[j] = false;
 				temp[i] = true;
 				bs.changeRow(temp, rowNumber);
+				*/
+				bs.modifyBoard(rowNumber, i, true);
 				
 				retState = recCheck(bs, rowNumber + 1);
 				
+				bs.modifyBoard(rowNumber, i, false);
+				
+				/*
 				boolean[] clean = new boolean[this.boardSize];
 				for(int j = 0; j < clean.length; j++) 
 					temp[j] = false;
 				
 				bs.changeRow(clean, rowNumber);
+				*/
 			}
 			else {
 				retState = null;

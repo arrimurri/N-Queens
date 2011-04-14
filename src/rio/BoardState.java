@@ -30,6 +30,10 @@ public class BoardState {
 		this.board[rowNum] = tempRow;
 	}
 	
+	public void modifyBoard(int x, int y, boolean b) {
+		this.board[x][y] = b;
+	}
+	
 	public boolean isOccupied(int x, int y) {
 		return this.board[x][y];
 	}
