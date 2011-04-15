@@ -22,7 +22,7 @@ public class NQueenMain {
 		
 		q.run();
 		long end = System.currentTimeMillis();
-		
+		System.out.println("You solved the " + queenAmount + "-Queens problem.");
 		System.out.println("Time it took to do the calculations: " + ((end - start) / 1000) + " " +
 				"seconds, more accurately " + (end - start) + " milliseconds");
 		
