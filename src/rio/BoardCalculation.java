@@ -6,20 +6,21 @@ import java.util.concurrent.Callable;
 public class BoardCalculation implements Callable<BoardState> {
 	
 	final BoardState bState;
-	final int rNumber;
-	List<BoardState> retList;
+	int rNumber;
+	List<Boolean> retList;
 	int boardSize;
 	
-	public BoardCalculation(BoardState boardState, int rowNumber, List<BoardState> l) {
+	public BoardCalculation(BoardState boardState, int rowNumber, List<Boolean> retList2) {
 		this.bState = boardState;
 		this.rNumber = rowNumber;
-		this.retList = l;
+		this.retList = retList2;
 		this.boardSize = this.bState.getBoardSize();
 	}
 
 	@Override
 	public BoardState call() throws Exception {
 		// If all rows have been counted return with that state
+		/*
 		if(this.rNumber >= this.boardSize) {
 			//System.out.println("There is a solution");
 			BoardState retbs = new BoardState(this.bState.getBoard());
@@ -28,94 +29,39 @@ public class BoardCalculation implements Callable<BoardState> {
 			}
 			return this.bState;		
 		}
+		*/
 		
-		int n = this.boardSize;
-		BoardState ret = null;
+		BoardState ret = recCheck();
 		
-		for(int i = 0; i < n; i++) {
-			if(this.checkUp(this.bState, i, this.rNumber) &&
-			   this.checkUpLeft(this.bState, i, this.rNumber) &&
-			   this.checkUpRight(this.bState, i, this.rNumber)) {
-				//System.out.println("True for this " + i + " in row " + this.rNumber);
-				//System.out.println(this.bState);
-				//BoardState newState = new BoardState(this.bState.getBoard());
-				boolean[] temp = new boolean[this.boardSize];
-				for(int j = 0; j < temp.length; j++) 
-					temp[j] = false;
-				temp[i] = true;
-				this.bState.changeRow(temp, this.rNumber);
-				
-				ret = recCheck(this.bState, this.rNumber + 1);
-				
-				boolean[] clean = new boolean[this.boardSize];
-				for(int j = 0; j < clean.length; j++) 
-					temp[j] = false;
-				
-				this.bState.changeRow(clean, this.rNumber);
-				//System.out.println("New state");
-				//System.out.println(newState);
-				
-				// "Recursively" call a new BoardCalculation
-				// BoardCalculation newbc = new BoardCalculation(newState, this.rNumber + 1, this.eService, this.retList);
-				
-				// Return a final state
-				// ret = this.eService.submit(newbc);
-			}
-			else {
-				ret = null;
-				//System.out.println("False for this " + i + " in row " + this.rNumber);
-				//System.out.println(this.bState);
-			}
-		}
 		if(ret == null)
 			return null;
 		return ret;
 	}
 	
-	private BoardState recCheck(BoardState bs, int rowNumber) {
-		if(rowNumber >= this.boardSize) {
+	private BoardState recCheck() {
+		if(this.rNumber >= this.boardSize) {
 			//System.out.println("There is a solution");
 			//System.out.println(bs);
-			BoardState retbs = new BoardState(bs.getBoard());
+			BoardState retbs = new BoardState(this.bState.getBoard());
+		
 			synchronized (this.retList) {
-				this.retList.add(retbs);
+				this.retList.add(true);
 			}
-			return bs;		
+			
+			return retbs;		
 		}
 		BoardState retState = null;
-		for(int i = 0; i < bs.getBoardSize(); i++) {
-			if(this.checkUp(bs, i, rowNumber) &&
-			   this.checkUpLeft(bs, i, rowNumber) && 
-			   this.checkUpRight(bs, i, rowNumber)) {
+		for(int i = 0; i < this.bState.getBoardSize(); i++) {
+			if(this.checkUp(this.bState, i, this.rNumber) &&
+			   this.checkUpLeft(this.bState, i, this.rNumber) && 
+			   this.checkUpRight(this.bState, i, this.rNumber)) {
+				this.bState.modifyBoard(this.rNumber, i, true);
 				
-				//BoardState newState = new BoardState(bs.getBoard());
-				/*
-				boolean[] temp = new boolean[this.boardSize];
-				for(int j = 0; j < temp.length; j++) 
-					temp[j] = false;
-				temp[i] = true;
-				this.bState.changeRow(temp, rowNumber);
-				retState = recCheck(this.bState, rowNumber + 1);
+				this.rNumber++;
+				retState = recCheck();
+				this.rNumber--;
 				
-				boolean[] temp = new boolean[this.boardSize];
-				for(int j = 0; j < temp.length; j++) 
-					temp[j] = false;
-				temp[i] = true;
-				bs.changeRow(temp, rowNumber);
-				*/
-				bs.modifyBoard(rowNumber, i, true);
-				
-				retState = recCheck(bs, rowNumber + 1);
-				
-				bs.modifyBoard(rowNumber, i, false);
-				
-				/*
-				boolean[] clean = new boolean[this.boardSize];
-				for(int j = 0; j < clean.length; j++) 
-					temp[j] = false;
-				
-				bs.changeRow(clean, rowNumber);
-				*/
+				this.bState.modifyBoard(this.rNumber, i, false);
 			}
 			else {
 				retState = null;

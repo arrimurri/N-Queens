@@ -17,7 +17,7 @@ import java.util.concurrent.Executors;
 public class NQueen {
 	ExecutorService service;
 	int bSize;
-	List<BoardState> retList = new ArrayList<BoardState>();
+	List<Boolean> retList = new ArrayList<Boolean>();
 	
 	public NQueen(int boardSize, ExecutorService s) {
 		this.service = s;
@@ -35,6 +35,7 @@ public class NQueen {
 	}
 	
 	public void run() {
+		
 		for(int i = 0; i < this.bSize; i++) {
 			boolean[] temp = new boolean[this.bSize];
 			temp[i] = true;
@@ -68,7 +69,7 @@ public class NQueen {
 		if(this.retList.isEmpty()) {
 			System.out.println("There are no solutions");
 		}
-		for(BoardState b : this.retList) {
+		for(Boolean b : this.retList) {
 			if(b != null) {
 				count++;
 				//System.out.println("Solution #" + count + ":");

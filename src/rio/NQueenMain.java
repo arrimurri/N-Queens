@@ -5,7 +5,7 @@ public class NQueenMain {
 		System.out.println("N-Queens parallelization");
 		
 		long start = System.currentTimeMillis();
-		int queenAmount = 15;
+		int queenAmount = 17;
 		int threads = 0;
 		
 		if(args.length == 1)
