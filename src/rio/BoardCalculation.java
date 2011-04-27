@@ -19,17 +19,6 @@ public class BoardCalculation implements Callable<BoardState> {
 
 	@Override
 	public BoardState call() throws Exception {
-		// If all rows have been counted return with that state
-		/*
-		if(this.rNumber >= this.boardSize) {
-			//System.out.println("There is a solution");
-			BoardState retbs = new BoardState(this.bState.getBoard());
-			synchronized (this.retList) {
-				this.retList.add(retbs);
-			}
-			return this.bState;		
-		}
-		*/
 		
 		BoardState ret = recCheck();
 		
